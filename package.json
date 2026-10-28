@@ -1,10 +1,26 @@
 {
   "name": "memento-web-controller",
+  "productName": "Memento Controller",
   "version": "0.1.0",
   "private": true,
-  "description": "Unofficial LAN web controller for the Memento Smart Frame",
+  "description": "Unofficial desktop controller for the Memento Smart Frame",
+  "author": "Gilbert Paquin",
+  "desktopName": "memento-controller.desktop",
+  "type": "module",
+  "main": "electron/main.js",
   "scripts": {
-    "setup": "npm --prefix server install && npm --prefix web install",
-    "start": "npm --prefix web run build && node server/src/index.js"
+    "setup": "npm install && npm --prefix server install && npm --prefix web install",
+    "start": "npm --prefix web run build && electron .",
+    "serve": "npm --prefix web run build && node server/src/index.js",
+    "dist": "npm --prefix web run build && electron-builder"
+  },
+  "dependencies": {
+    "express": "^5.3.0",
+    "multer": "^2.5.0",
+    "sharp": "^0.35.5"
+  },
+  "devDependencies": {
+    "electron": "45.1.0",
+    "electron-builder": "26.18.0"
   }
 }

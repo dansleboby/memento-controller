@@ -1,0 +1,39 @@
+appId: io.github.dansleboby.memento-controller
+productName: Memento Controller
+artifactName: Memento-Controller-${version}-${os}-${arch}.${ext}
+
+directories:
+  output: dist
+  buildResources: build
+
+# Server files resolve "type": "module" from server/package.json, so it must ship too.
+files:
+  - electron/**
+  - server/package.json
+  - server/src/**
+  - "!server/src/**/*.test.js"
+  - web/dist/**
+
+# sharp ships prebuilt N-API binaries per platform: nothing to rebuild for Electron,
+# but its .node and libvips must sit on the real filesystem.
+npmRebuild: false
+asarUnpack:
+  - "**/node_modules/sharp/**/*"
+  - "**/node_modules/@img/**/*"
+
+mac:
+  target: dmg
+  category: public.app-category.photography
+  # Ad-hoc signature: required for the app to launch on Apple Silicon without a
+  # Developer ID certificate. Replace with a real identity to sign and notarize.
+  identity: "-"
+  extendInfo:
+    NSLocalNetworkUsageDescription: Memento Controller finds and controls your Memento Smart Frame on the local network.
+
+win:
+  target: nsis
+
+linux:
+  target: AppImage
+  category: Graphics
+  syncDesktopName: true

@@ -249,9 +249,10 @@ Two processes, one launch:
      live status/transfer progress). Never speaks the frame protocol directly
      (browsers cannot do raw TCP/UDP).
 
-Packaging: a single `npm start` that runs the Node backend serving the
-pre-built UI. The on-demand launch today and an always-on host later are the
-same binary; only where it runs changes.
+Packaging: an Electron desktop app (Windows installer, macOS dmg, Linux
+AppImage) that runs the same backend in its main process, bound to loopback,
+and shows the UI in its window. `npm run serve` still runs the backend alone on
+`0.0.0.0` for LAN or always-on use; both share one server module.
 
 ### Reliability notes baked into the design
 - Every frame write is mirror-exact to the recovered format and verified with a
