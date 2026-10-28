@@ -19,8 +19,9 @@ Verify a download with `sha256sum -c SHA256SUMS`.
 
 - These are the original packages, as the maker distributed them: Android
   update zips still carrying their whole-file signature (`signed by SignApk`),
-  1034 entries each, intact. They were recovered from copies shared by owners
-  in the DPReview thread
+  1034 entries each, intact. They were recovered from copies shared by owners,
+  mainly in this [FredMiranda forum thread](https://www.fredmiranda.com/forum/topic/1636818/2),
+  and in the DPReview thread
   [Anyone here own a Memento Smart Frame?](https://www.dpreview.com/forums/threads/anyone-here-own-a-memento-smart-frame.4471198/);
   the maker's own Google Drive folder (linked from the PDF) is no longer a
   reliable source.
