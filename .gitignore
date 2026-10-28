@@ -1,0 +1,11 @@
+# Dependencies / build output
+node_modules/
+dist/
+
+# Firmware binaries ship as release assets, not in git (see firmware/README.md)
+firmware/*
+!firmware/README.md
+!firmware/SHA256SUMS
+
+# OS
+.DS_Store
