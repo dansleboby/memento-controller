@@ -8,25 +8,26 @@ in the repository.
 
 | File | What it is | Size | Download |
 |------|------------|------|----------|
-| `Memento_25-extracted-20170727.zip` | System update for the 25" frame | 123 MB | _link after publication_ |
-| `Memento_35-extracted-20170727.zip` | System update for the 35" frame | 123 MB | _link after publication_ |
+| `Memento_25.zip` | System update package for the 25" frame | 123 MB | _link after publication_ |
+| `Memento_35.zip` | System update package for the 35" frame | 123 MB | _link after publication_ |
 | `smartframepc.exe` | Official Windows app installer | 17 MB | [Wayback Machine, 2019-04-07](https://web.archive.org/web/20190407070756/https://builds.mementosmartframe.com/latest/smartframepc.exe) |
 | `memento-35-manual-update-procedure.pdf` | Official USB update procedure (35") | 0.4 MB | _link after publication_ |
 
 Verify a download with `sha256sum -c SHA256SUMS`.
 
-## System updates
+## System update packages
 
+- These are the original packages, as the maker distributed them: Android
+  update zips still carrying their whole-file signature (`signed by SignApk`),
+  1034 entries each, intact. They were recovered from copies shared on owner
+  forums; the maker's own Google Drive folder (linked from the PDF) is no
+  longer a reliable source.
 - Build `KOT49H.20170727` (Android 4.4.2, board `n301`), built 2017-07-27,
   signed with test keys. The two packages differ only in their
   hardware-specific files (boot image, recovery, display library,
   `CadreHardware.json`).
-- **These are not the original files.** The maker distributed `Memento_35.zip`
-  plus an `update.txt` through a Google Drive folder (see the PDF); neither
-  original survives here. These archives were rebuilt from the extracted
-  package contents, with the original layout (`META-INF/`, `system/`,
-  `recovery/`, images). The whole-file signature of the original package could
-  not be preserved, so the frame's USB update may refuse them as they are.
+- The official USB procedure also copies an `update.txt` next to the zip; that
+  file has not been found, so its expected content is unknown.
 - The frame app bundled in the system image (`system/app/Cadre.apk`) dates from
   2015-11-17; frames in the field may run a newer app (the tested frame reports
   software 6.02).
