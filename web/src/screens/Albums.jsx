@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { ArrowDown, ArrowUp, ImagesSquare, Lock, PencilSimple, Plus, Trash } from '@phosphor-icons/react';
 import * as api from '../api/client.js';
 import { RESERVED_ALBUMS, albumLabel } from '../constants.js';
+import { useT } from '../i18n/index.jsx';
 
 function AlbumCover({ image }) {
   return (
@@ -20,6 +21,7 @@ function AlbumCover({ image }) {
 }
 
 export default function Albums() {
+  const t = useT();
   const [albums, setAlbums] = useState([]);
   const [error, setError] = useState('');
   const [newName, setNewName] = useState('');
@@ -46,7 +48,7 @@ export default function Albums() {
       setAlbums(data.albums);
       return true;
     } catch (err) {
-      setError(err.message || 'Erreur');
+      setError(err.message || t('common.error'));
       return false;
     }
   }
@@ -77,7 +79,7 @@ export default function Albums() {
       const images = await api.getThumbnails();
       setAssigning({ album: album.name, images, selected: new Set(album.images) });
     } catch (err) {
-      setError(err.message || 'Erreur');
+      setError(err.message || t('common.error'));
     }
   }
 
@@ -100,17 +102,17 @@ export default function Albums() {
   }
 
   return (
-    <section aria-label="Albums" className="screen">
+    <section aria-label={t('albums.title')} className="screen">
       <div className="screen-head">
-        <h2>Albums</h2>
+        <h2>{t('albums.title')}</h2>
         <form onSubmit={create} className="create-form">
           <label>
-            Nouvel album
+            {t('albums.new')}
             <input value={newName} onChange={(e) => setNewName(e.target.value)} />
           </label>
           <button type="submit" className="btn-primary">
             <Plus size={18} weight="light" aria-hidden="true" />
-            Créer
+            {t('albums.create')}
           </button>
         </form>
       </div>
@@ -124,14 +126,12 @@ export default function Albums() {
             <li key={album.name} className="album-row">
               <AlbumCover image={album.images[0]} />
               <div>
-                <span className="album-name">{albumLabel(album.name)}</span>
+                <span className="album-name">{albumLabel(album.name, t)}</span>
                 <div className="album-meta">
-                  <small className="badge">
-                    {album.images.length} photo{album.images.length > 1 ? 's' : ''}
-                  </small>
+                  <small className="badge">{t('albums.count', album.images.length)}</small>
                   {reserved && (
                     <em className="badge">
-                      <Lock size={14} weight="light" aria-hidden="true" /> Album réservé
+                      <Lock size={14} weight="light" aria-hidden="true" /> {t('albums.reserved')}
                     </em>
                   )}
                 </div>
@@ -140,8 +140,8 @@ export default function Albums() {
                 <button
                   type="button"
                   className="btn-icon btn-sm"
-                  aria-label="Monter"
-                  title="Monter"
+                  aria-label={t('albums.up')}
+                  title={t('albums.up')}
                   disabled={i === 0}
                   onClick={() => move(i, -1)}
                 >
@@ -150,8 +150,8 @@ export default function Albums() {
                 <button
                   type="button"
                   className="btn-icon btn-sm"
-                  aria-label="Descendre"
-                  title="Descendre"
+                  aria-label={t('albums.down')}
+                  title={t('albums.down')}
                   disabled={i === albums.length - 1}
                   onClick={() => move(i, 1)}
                 >
@@ -164,7 +164,7 @@ export default function Albums() {
                   onClick={() => setRenaming({ from: album.name, to: album.name })}
                 >
                   <PencilSimple size={16} weight="light" aria-hidden="true" />
-                  Renommer
+                  {t('albums.rename')}
                 </button>
                 <button
                   type="button"
@@ -173,11 +173,11 @@ export default function Albums() {
                   onClick={() => send({ type: 'deleteAlbum', name: album.name })}
                 >
                   <Trash size={16} weight="light" aria-hidden="true" />
-                  Supprimer
+                  {t('albums.delete')}
                 </button>
                 <button type="button" className="btn-sm" onClick={() => openAssign(album)}>
                   <ImagesSquare size={16} weight="light" aria-hidden="true" />
-                  Assigner des images
+                  {t('albums.assign')}
                 </button>
               </div>
             </li>
@@ -188,7 +188,7 @@ export default function Albums() {
       {renaming && (
         <form onSubmit={submitRename} className="inline-form panel panel-padded">
           <label>
-            Nouveau nom
+            {t('albums.newName')}
             <input
               value={renaming.to}
               onChange={(e) => setRenaming({ ...renaming, to: e.target.value })}
@@ -196,10 +196,10 @@ export default function Albums() {
           </label>
           <div className="button-row">
             <button type="submit" className="btn-primary">
-              Valider
+              {t('albums.save')}
             </button>
             <button type="button" onClick={() => setRenaming(null)}>
-              Annuler
+              {t('common.cancel')}
             </button>
           </div>
         </form>
@@ -207,7 +207,7 @@ export default function Albums() {
 
       {assigning && (
         <fieldset className="assign-panel">
-          <legend>Assigner des images : {albumLabel(assigning.album)}</legend>
+          <legend>{t('albums.assignTitle', albumLabel(assigning.album, t))}</legend>
           <div className="assign-grid">
             {assigning.images.map((name) => (
               <label key={name} className="assign-item">
@@ -223,10 +223,10 @@ export default function Albums() {
           </div>
           <div className="button-row">
             <button type="button" className="btn-primary" onClick={applyAssign}>
-              Appliquer
+              {t('albums.apply')}
             </button>
             <button type="button" onClick={() => setAssigning(null)}>
-              Annuler
+              {t('common.cancel')}
             </button>
           </div>
         </fieldset>

@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { MagnifyingGlass, WifiHigh } from '@phosphor-icons/react';
 import * as api from '../api/client.js';
+import { useT } from '../i18n/index.jsx';
+import LanguageToggle from '../components/LanguageToggle.jsx';
 import ThemeToggle from '../components/ThemeToggle.jsx';
 
 const LAST_IP_KEY = 'memento.lastIp';
@@ -14,6 +16,7 @@ function readLastIp() {
 }
 
 export default function Connect({ onConnected }) {
+  const t = useT();
   const [ip, setIp] = useState(readLastIp);
   const [frames, setFrames] = useState(null);
   const [scanning, setScanning] = useState(false);
@@ -27,7 +30,7 @@ export default function Connect({ onConnected }) {
       setFrames(await api.discover());
     } catch (e) {
       setFrames(null);
-      setError(`Échec de la recherche : ${e.message}`);
+      setError(t('connect.scanFailed', e.message));
     } finally {
       setScanning(false);
     }
@@ -47,30 +50,31 @@ export default function Connect({ onConnected }) {
       }
       onConnected(res?.config);
     } catch (e) {
-      setError(`Connexion impossible à ${addr} : ${e.message}`);
+      setError(t('connect.failed', addr, e.message));
       setConnecting(false);
     }
   }
 
   return (
     <main className="connect">
-      <ThemeToggle className="connect-theme" />
+      <div className="connect-tools">
+        <LanguageToggle />
+        <ThemeToggle />
+      </div>
       <div className="connect-inner">
         <div className="wordmark" aria-hidden="true">
           <span className="script">Memento</span>
           <small>Smart frame</small>
         </div>
-        <h1>Connectez-vous à votre cadre</h1>
+        <h1>{t('connect.title')}</h1>
         <div className="framed">
           <div className="framed-mat">
             <section className="scan">
               <button type="button" onClick={scan} disabled={scanning || connecting}>
                 <MagnifyingGlass size={18} weight="light" aria-hidden="true" />
-                {scanning ? 'Recherche...' : 'Rechercher sur le réseau'}
+                {scanning ? t('connect.scanning') : t('connect.scan')}
               </button>
-              {frames && frames.length === 0 && (
-                <p className="muted">Aucun cadre trouvé. Saisissez l'adresse IP ci-dessous.</p>
-              )}
+              {frames && frames.length === 0 && <p className="muted">{t('connect.none')}</p>}
               {frames && frames.length > 0 && (
                 <ul className="frame-list">
                   {frames.map((f) => (
@@ -86,7 +90,7 @@ export default function Connect({ onConnected }) {
               )}
             </section>
 
-            <div className="or-divider">ou</div>
+            <div className="or-divider">{t('connect.or')}</div>
 
             <form
               className="ip-form"
@@ -96,7 +100,7 @@ export default function Connect({ onConnected }) {
               }}
             >
               <label>
-                Adresse IP
+                {t('connect.ip')}
                 <input
                   type="text"
                   value={ip}
@@ -106,7 +110,7 @@ export default function Connect({ onConnected }) {
                 />
               </label>
               <button type="submit" className="btn-primary" disabled={connecting || !ip.trim()}>
-                Se connecter
+                {t('connect.submit')}
               </button>
             </form>
 

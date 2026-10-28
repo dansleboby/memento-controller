@@ -2,17 +2,14 @@ import { useCallback, useEffect, useState } from 'react';
 import { CaretLeft, CaretRight, Trash } from '@phosphor-icons/react';
 import * as api from '../api/client.js';
 import { FINISHES, applyFinish, readFinish } from '../finish.js';
+import { useT } from '../i18n/index.jsx';
 import ThumbGrid, { ThumbGridPlaceholder } from '../components/ThumbGrid.jsx';
 import UploadDropzone from '../components/UploadDropzone.jsx';
 
-const STATE_LABELS = {
-  transcoding: 'Conversion',
-  uploading: 'Envoi au cadre',
-  done: 'Terminé',
-  error: 'Erreur',
-};
+const UPLOAD_STATES = new Set(['transcoding', 'uploading', 'done', 'error']);
 
 export default function Library() {
+  const t = useT();
   const [names, setNames] = useState([]);
   const [loaded, setLoaded] = useState(false);
   const [selected, setSelected] = useState([]);
@@ -29,15 +26,16 @@ export default function Library() {
       setNames(list);
       setSelected((sel) => sel.filter((n) => list.includes(n)));
     } catch {
-      setError('Impossible de charger les images.');
+      setError(t('library.loadFailed'));
     } finally {
       setLoaded(true);
     }
-  }, []);
+  }, [t]);
 
   useEffect(() => {
     refresh();
-  }, [refresh]);
+    // Mount only: `refresh` changes identity with the language, which must not re-read the frame.
+  }, []);
 
   useEffect(() => {
     const unsubscribe = api.subscribeEvents({ onUpload: setProgress });
@@ -52,7 +50,7 @@ export default function Library() {
       await api.upload(files, { onProgress: () => {} });
       await refresh();
     } catch {
-      setError("Échec de l'import des images.");
+      setError(t('library.uploadFailed'));
     } finally {
       setUploading(false);
       setProgress(null);
@@ -66,7 +64,7 @@ export default function Library() {
       await api.deleteImages(selected);
       setSelected([]);
     } catch {
-      setError('Échec de la suppression.');
+      setError(t('library.deleteFailed'));
     }
     await refresh();
   }
@@ -76,7 +74,7 @@ export default function Library() {
     try {
       await api.control(action, ...args);
     } catch {
-      setError("Échec de la commande envoyée au cadre.");
+      setError(t('library.controlFailed'));
     }
   }
 
@@ -89,20 +87,20 @@ export default function Library() {
     <section className="screen">
       <div className="screen-head">
         <div>
-          <h2>Bibliothèque</h2>
-          {names.length > 0 && <p>{names.length} photos sur le cadre</p>}
+          <h2>{t('library.title')}</h2>
+          {names.length > 0 && <p>{t('library.count', names.length)}</p>}
         </div>
         <div className="library-tools">
           <fieldset className="finish-picker">
-            <legend className="tool-label">Cadre</legend>
-            {FINISHES.map(([key, label]) => (
-              <label key={key} className="finish-swatch" title={label}>
+            <legend className="tool-label">{t('library.finish')}</legend>
+            {FINISHES.map((key) => (
+              <label key={key} className="finish-swatch" title={t(`finish.${key}`)}>
                 <input
                   type="radio"
                   name="finish"
                   value={key}
                   checked={finish === key}
-                  aria-label={label}
+                  aria-label={t(`finish.${key}`)}
                   onChange={() => {
                     setFinish(key);
                     applyFinish(key);
@@ -113,12 +111,12 @@ export default function Library() {
             ))}
           </fieldset>
           <div className="remote">
-            <span className="tool-label">Sur le cadre</span>
+            <span className="tool-label">{t('library.onFrame')}</span>
             <button
               type="button"
               className="btn-icon"
-              aria-label="Image précédente"
-              title="Image précédente"
+              aria-label={t('library.previous')}
+              title={t('library.previous')}
               onClick={() => control('previousFrame')}
             >
               <CaretLeft size={18} weight="light" aria-hidden="true" />
@@ -126,8 +124,8 @@ export default function Library() {
             <button
               type="button"
               className="btn-icon"
-              aria-label="Image suivante"
-              title="Image suivante"
+              aria-label={t('library.next')}
+              title={t('library.next')}
               onClick={() => control('nextFrame')}
             >
               <CaretRight size={18} weight="light" aria-hidden="true" />
@@ -143,7 +141,7 @@ export default function Library() {
       {progress && (
         <div className="upload-progress">
           <p>
-            {progress.name} ({progress.index}/{progress.total}) - {STATE_LABELS[progress.state] || progress.state}
+            {progress.name} ({progress.index}/{progress.total}) - {UPLOAD_STATES.has(progress.state) ? t(`upload.${progress.state}`) : progress.state}
           </p>
           <div className="progress-track" role="progressbar" aria-valuemin={0} aria-valuemax={100} aria-valuenow={percent}>
             <div className="progress-fill" style={{ width: `${percent}%` }} />
@@ -154,7 +152,7 @@ export default function Library() {
       {!loaded ? (
         <div className="loading">
           <p className="loading-note" aria-live="polite">
-            Chargement des photos...
+            {t('library.loading')}
           </p>
           <ThumbGridPlaceholder />
         </div>
@@ -163,7 +161,7 @@ export default function Library() {
           <div className="framed" aria-hidden="true">
             <div className="framed-mat" />
           </div>
-          <p>Aucune image sur le cadre.</p>
+          <p>{t('library.empty')}</p>
         </div>
       ) : (
         <ThumbGrid
@@ -178,22 +176,20 @@ export default function Library() {
         <div className="selection-bar">
           {!confirming ? (
             <>
-              <span>
-                {selected.length} sélectionnée{selected.length > 1 ? 's' : ''}
-              </span>
+              <span>{t('library.selected', selected.length)}</span>
               <button type="button" className="btn-danger btn-sm" onClick={() => setConfirming(true)}>
                 <Trash size={16} weight="light" aria-hidden="true" />
-                Supprimer la sélection ({selected.length})
+                {t('library.deleteSelection', selected.length)}
               </button>
             </>
           ) : (
-            <div role="group" aria-label="Confirmation de suppression" className="button-row">
-              <p>Supprimer définitivement {selected.length} image(s) du cadre ?</p>
+            <div role="group" aria-label={t('library.confirmGroup')} className="button-row">
+              <p>{t('library.confirmText', selected.length)}</p>
               <button type="button" className="btn-danger btn-sm" onClick={handleDelete}>
-                Confirmer la suppression
+                {t('library.confirmDelete')}
               </button>
               <button type="button" className="btn-sm" onClick={() => setConfirming(false)}>
-                Annuler
+                {t('common.cancel')}
               </button>
             </div>
           )}

@@ -3,14 +3,16 @@ import { ArrowsClockwise } from '@phosphor-icons/react';
 import * as api from '../api/client.js';
 import { useConfig, useWriter } from './settingsHooks.js';
 import { FRAME_TIME_ZONES } from '../timeZones.js';
+import { useT } from '../i18n/index.jsx';
 
-// frameTime is the frame's own wall clock, zone-less: show its digits as-is.
-function formatFrameTime(frameTime) {
+// frameTime is the frame's own wall clock, zone-less: its digits are shown as-is.
+function parseFrameTime(frameTime) {
   const m = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})/.exec(frameTime ?? '');
-  return m ? `${m[4]}:${m[5]}, le ${m[3]}/${m[2]}/${m[1]}` : null;
+  return m ? { year: m[1], month: m[2], day: m[3], hour: m[4], minute: m[5] } : null;
 }
 
 function Form({ config }) {
+  const t = useT();
   const { write, error } = useWriter();
   const [zone, setZone] = useState(config.TimeZoneName ?? '');
   const [status, setStatus] = useState(null);
@@ -19,7 +21,7 @@ function Form({ config }) {
 
   const readFrameTime = useCallback(async () => {
     try {
-      setFrameTime(formatFrameTime((await api.getFrameTime())?.frameTime));
+      setFrameTime(parseFrameTime((await api.getFrameTime())?.frameTime));
     } catch {
       setFrameTime(null);
     }
@@ -34,10 +36,10 @@ function Form({ config }) {
     setClockError(null);
     try {
       await api.setTime(new Date().toISOString());
-      setStatus('Horloge réglée.');
+      setStatus(t('clock.synced'));
       await readFrameTime();
     } catch (e) {
-      setClockError(`Échec du réglage de l'horloge : ${e.message}`);
+      setClockError(t('clock.syncFailed', e.message));
     }
   }
 
@@ -46,7 +48,7 @@ function Form({ config }) {
       {(error || clockError) && <p role="alert">{error || clockError}</p>}
       <div className="panel">
         <div className="field-row">
-          <label htmlFor="timezone">Fuseau horaire</label>
+          <label htmlFor="timezone">{t('clock.zone')}</label>
           <select
             id="timezone"
             value={zone}
@@ -63,12 +65,12 @@ function Form({ config }) {
           </select>
         </div>
         <div className="field-row">
-          <span className="field-label">Heure du cadre</span>
+          <span className="field-label">{t('clock.frameTime')}</span>
           <div className="button-row clock-row">
-            {frameTime && <span className="clock-value">{frameTime}</span>}
+            {frameTime && <span className="clock-value">{t('clock.format', frameTime)}</span>}
             <button type="button" className="btn-primary" onClick={syncClock}>
               <ArrowsClockwise size={18} weight="light" aria-hidden="true" />
-              Régler l'horloge
+              {t('clock.sync')}
             </button>
           </div>
         </div>
@@ -79,17 +81,18 @@ function Form({ config }) {
 }
 
 export default function Clock() {
+  const t = useT();
   const { config, error } = useConfig();
   return (
-    <section aria-label="Horloge" className="screen">
+    <section aria-label={t('clock.title')} className="screen">
       <div className="screen-head">
         <div>
-          <h2>Horloge</h2>
-          <p>Le cadre règle l'heure d'après l'heure de cet appareil.</p>
+          <h2>{t('clock.title')}</h2>
+          <p>{t('clock.lede')}</p>
         </div>
       </div>
       {error && <p role="alert">{error}</p>}
-      {config || error ? <Form config={config || {}} /> : <p className="muted">Chargement...</p>}
+      {config || error ? <Form config={config || {}} /> : <p className="muted">{t('common.loading')}</p>}
     </section>
   );
 }

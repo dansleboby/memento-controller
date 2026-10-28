@@ -8,7 +8,7 @@ vi.mock('../api/client.js');
 
 beforeEach(() => {
   vi.resetAllMocks();
-  localStorage.clear();
+  localStorage.removeItem('memento.lastIp');
 });
 
 describe('Connect', () => {

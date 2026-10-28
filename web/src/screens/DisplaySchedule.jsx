@@ -2,19 +2,15 @@ import { useRef, useState } from 'react';
 import { DeviceRotate, FloppyDisk, Moon, MoonStars, Plus, Power, Shuffle, Sun, Timer, X } from '@phosphor-icons/react';
 import * as api from '../api/client.js';
 import { useConfig, useWriter } from './settingsHooks.js';
+import { useT } from '../i18n/index.jsx';
 
 const TOGGLES = [
-  { id: 'power', label: 'Alimentation', action: 'ChangePower', field: 'DisplayOn', Icon: Power },
-  { id: 'shuffle', label: 'Lecture aléatoire', action: 'ChangeShuffle', field: 'ShuffleOn', Icon: Shuffle },
-  { id: 'portrait', label: 'Mode portrait', action: 'ChangeOrientation', field: 'PortraitMode', Icon: DeviceRotate },
-  { id: 'evening', label: 'Mode nuit (soirée)', action: 'ChangeEvening', field: 'NightModeOn', Icon: MoonStars },
+  { id: 'power', action: 'ChangePower', field: 'DisplayOn', Icon: Power },
+  { id: 'shuffle', action: 'ChangeShuffle', field: 'ShuffleOn', Icon: Shuffle },
+  { id: 'portrait', action: 'ChangeOrientation', field: 'PortraitMode', Icon: DeviceRotate },
+  { id: 'evening', action: 'ChangeEvening', field: 'NightModeOn', Icon: MoonStars },
 ];
 
-// The frame's AwayDays enum, by index.
-const AWAY_DAYS = [
-  'Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi',
-  'Fin de semaine', 'Jours de semaine', 'Tous les jours',
-];
 const HOURS = Array.from({ length: 24 }, (_, h) => h);
 const MAX_AWAY_SLOTS = 7;
 const NEW_SLOT = { day: 9, off: 23, on: 7 };
@@ -30,12 +26,12 @@ function readSlots(config) {
   }));
 }
 
-function HourSelect({ label, value, onChange, Icon }) {
+function HourSelect({ label, ariaLabel, value, onChange, Icon }) {
   return (
     <label>
       <Icon size={18} weight="light" aria-hidden="true" />
-      {label.replace(/ \(.*\)$/, '')}
-      <select aria-label={label} value={value} onChange={(e) => onChange(Number(e.target.value))}>
+      {label}
+      <select aria-label={ariaLabel} value={value} onChange={(e) => onChange(Number(e.target.value))}>
         {HOURS.map((h) => (
           <option key={h} value={h}>
             {String(h).padStart(2, '0')}:00
@@ -47,6 +43,7 @@ function HourSelect({ label, value, onChange, Icon }) {
 }
 
 function AwaySchedule({ config }) {
+  const t = useT();
   const nextId = useRef(0);
   const withId = (slot) => ({ ...slot, id: nextId.current++ });
   const [slots, setSlots] = useState(() => readSlots(config).map(withId));
@@ -61,22 +58,20 @@ function AwaySchedule({ config }) {
     setError(null);
     try {
       await api.setAwaySchedule(slots.map(({ day, off, on }) => ({ day, off, on })));
-      setStatus('Horaire enregistré.');
+      setStatus(t('away.saved'));
     } catch (e) {
-      setError(`Échec de l'enregistrement : ${e.message}`);
+      setError(t('common.saveFailed', e.message));
     }
   }
 
   return (
     <section aria-labelledby="away-title" className="panel panel-padded">
       <div>
-        <h3 id="away-title">Horaire d'absence</h3>
-        <p className="muted">L'écran s'éteint pendant chaque créneau.</p>
+        <h3 id="away-title">{t('away.title')}</h3>
+        <p className="muted">{t('away.lede')}</p>
       </div>
       {hasDisabled && (
-        <p className="note">
-          Un créneau marqué désactivé s'applique quand même sur ce cadre : retire-le pour l'arrêter.
-        </p>
+        <p className="note">{t('away.disabledNote')}</p>
       )}
       {error && <p role="alert">{error}</p>}
       {slots.length ? (
@@ -86,13 +81,13 @@ function AwaySchedule({ config }) {
             return (
               <li key={slot.id} className="slot">
                 <label>
-                  Jours
+                  {t('away.days')}
                   <select
-                    aria-label={`Jours (créneau ${n})`}
+                    aria-label={t('away.daysFor', n)}
                     value={slot.day}
                     onChange={(e) => update(slot.id, { day: Number(e.target.value) })}
                   >
-                    {AWAY_DAYS.map((label, day) => (
+                    {t('away.dayNames').map((label, day) => (
                       <option key={day} value={day}>
                         {label}
                       </option>
@@ -100,13 +95,15 @@ function AwaySchedule({ config }) {
                   </select>
                 </label>
                 <HourSelect
-                  label={`Extinction (créneau ${n})`}
+                  label={t('away.off')}
+                  ariaLabel={t('away.offFor', n)}
                   Icon={Moon}
                   value={slot.off}
                   onChange={(off) => update(slot.id, { off })}
                 />
                 <HourSelect
-                  label={`Rallumage (créneau ${n})`}
+                  label={t('away.on')}
+                  ariaLabel={t('away.onFor', n)}
                   Icon={Sun}
                   value={slot.on}
                   onChange={(on) => update(slot.id, { on })}
@@ -114,8 +111,8 @@ function AwaySchedule({ config }) {
                 <button
                   type="button"
                   className="btn-icon btn-sm btn-ghost"
-                  aria-label={`Retirer le créneau ${n}`}
-                  title="Retirer"
+                  aria-label={t('away.removeFor', n)}
+                  title={t('away.remove')}
                   onClick={() => setSlots((prev) => prev.filter((s) => s.id !== slot.id))}
                 >
                   <X size={18} weight="light" aria-hidden="true" />
@@ -125,7 +122,7 @@ function AwaySchedule({ config }) {
           })}
         </ul>
       ) : (
-        <p className="muted">Aucun créneau : l'écran ne s'éteint jamais selon l'horaire.</p>
+        <p className="muted">{t('away.empty')}</p>
       )}
       <div className="button-row">
         <button
@@ -134,11 +131,11 @@ function AwaySchedule({ config }) {
           onClick={() => setSlots((prev) => [...prev, withId(NEW_SLOT)])}
         >
           <Plus size={18} weight="light" aria-hidden="true" />
-          Ajouter un créneau
+          {t('away.add')}
         </button>
         <button type="button" className="btn-primary" onClick={save}>
           <FloppyDisk size={18} weight="light" aria-hidden="true" />
-          Enregistrer l'horaire
+          {t('away.save')}
         </button>
       </div>
       {status && <p role="status">{status}</p>}
@@ -147,9 +144,10 @@ function AwaySchedule({ config }) {
 }
 
 function Form({ config }) {
+  const t = useT();
   const { write, writeDebounced, error } = useWriter();
   const [toggles, setToggles] = useState(() =>
-    Object.fromEntries(TOGGLES.map((t) => [t.id, Boolean(config[t.field])])),
+    Object.fromEntries(TOGGLES.map((toggle) => [toggle.id, Boolean(config[toggle.field])])),
   );
   const [duration, setDuration] = useState(config.DisplayTime ?? '');
 
@@ -157,22 +155,22 @@ function Form({ config }) {
     <>
       {error && <p role="alert">{error}</p>}
       <div className="panel">
-        {TOGGLES.map((t) => (
-          <label key={t.id} className="switch-row">
+        {TOGGLES.map(({ id, action, Icon }) => (
+          <label key={id} className="switch-row">
             <span>
               <span className="row-icon">
-                <t.Icon size={18} weight="light" aria-hidden="true" />
+                <Icon size={18} weight="light" aria-hidden="true" />
               </span>
-              {t.label}
+              {t(`display.${id}`)}
             </span>
             <input
               type="checkbox"
               className="switch"
-              checked={toggles[t.id]}
+              checked={toggles[id]}
               onChange={(e) => {
                 const v = e.target.checked;
-                setToggles((prev) => ({ ...prev, [t.id]: v }));
-                write(t.action, v);
+                setToggles((prev) => ({ ...prev, [id]: v }));
+                write(action, v);
               }}
             />
           </label>
@@ -182,18 +180,18 @@ function Form({ config }) {
             <span className="row-icon">
               <Timer size={18} weight="light" aria-hidden="true" />
             </span>
-            Durée par image (s)
+            {t('display.duration')}
           </label>
           <input
-          id="duration"
-          type="number"
-          min={1}
-          value={duration}
-          onChange={(e) => {
-            setDuration(e.target.value);
-            const n = parseInt(e.target.value, 10);
-            if (Number.isFinite(n) && n > 0) writeDebounced('ChangePictureDuration', n);
-          }}
+            id="duration"
+            type="number"
+            min={1}
+            value={duration}
+            onChange={(e) => {
+              setDuration(e.target.value);
+              const n = parseInt(e.target.value, 10);
+              if (Number.isFinite(n) && n > 0) writeDebounced('ChangePictureDuration', n);
+            }}
           />
         </div>
       </div>
@@ -203,14 +201,15 @@ function Form({ config }) {
 }
 
 export default function DisplaySchedule() {
+  const t = useT();
   const { config, error } = useConfig();
   return (
-    <section aria-label="Affichage et horaire" className="screen">
+    <section aria-label={t('display.aria')} className="screen">
       <div className="screen-head">
-        <h2>Affichage</h2>
+        <h2>{t('display.title')}</h2>
       </div>
       {error && <p role="alert">{error}</p>}
-      {config || error ? <Form config={config || {}} /> : <p className="muted">Chargement...</p>}
+      {config || error ? <Form config={config || {}} /> : <p className="muted">{t('common.loading')}</p>}
     </section>
   );
 }

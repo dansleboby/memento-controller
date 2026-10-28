@@ -551,10 +551,17 @@ input[type='range']::-moz-range-thumb {
   gap: 0.25rem;
 }
 
-.connect-theme {
+.connect-tools {
   position: fixed;
   top: 1rem;
   right: 1rem;
+  display: flex;
+  gap: 0.25rem;
+}
+
+.lang-toggle {
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
 }
 
 .clock-row {

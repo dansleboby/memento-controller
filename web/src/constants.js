@@ -3,10 +3,10 @@
 export const RESERVED_ALBUMS = ['Photos_$%^&(*@#!', 'Evening_$%^&(*@#!', 'Remote_$%^&(*@#!'];
 
 // Photos holds every uploaded photo; the frame plays Evening while night mode is on.
-const RESERVED_LABELS = {
-  'Photos_$%^&(*@#!': 'Toutes les photos',
-  'Evening_$%^&(*@#!': 'Soirée',
-  'Remote_$%^&(*@#!': 'À distance',
+const RESERVED_LABEL_KEYS = {
+  'Photos_$%^&(*@#!': 'album.all',
+  'Evening_$%^&(*@#!': 'album.evening',
+  'Remote_$%^&(*@#!': 'album.remote',
 };
 
-export const albumLabel = (name) => RESERVED_LABELS[name] ?? name;
+export const albumLabel = (name, t) => (RESERVED_LABEL_KEYS[name] ? t(RESERVED_LABEL_KEYS[name]) : name);

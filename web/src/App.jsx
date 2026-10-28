@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { SignOut } from '@phosphor-icons/react';
 import * as api from './api/client.js';
+import { useT } from './i18n/index.jsx';
+import LanguageToggle from './components/LanguageToggle.jsx';
 import ThemeToggle from './components/ThemeToggle.jsx';
 import Connect from './screens/Connect.jsx';
 import Library from './screens/Library.jsx';
@@ -11,18 +13,19 @@ import Clock from './screens/Clock.jsx';
 import FrameInfo from './screens/FrameInfo.jsx';
 import Advanced from './screens/Advanced.jsx';
 
-// Add further screens as new entries here.
+// Add further screens as new entries here; the label comes from the `tab.<key>` translation.
 const TABS = [
-  { key: 'library', label: 'Bibliothèque', element: <Library /> },
-  { key: 'albums', label: 'Albums', element: <Albums /> },
-  { key: 'image', label: 'Image', element: <ImageSettings /> },
-  { key: 'display', label: 'Affichage', element: <DisplaySchedule /> },
-  { key: 'clock', label: 'Horloge', element: <Clock /> },
-  { key: 'info', label: 'Infos', element: <FrameInfo /> },
-  { key: 'advanced', label: 'Avancé', element: <Advanced /> },
+  { key: 'library', element: <Library /> },
+  { key: 'albums', element: <Albums /> },
+  { key: 'image', element: <ImageSettings /> },
+  { key: 'display', element: <DisplaySchedule /> },
+  { key: 'clock', element: <Clock /> },
+  { key: 'info', element: <FrameInfo /> },
+  { key: 'advanced', element: <Advanced /> },
 ];
 
 export default function App() {
+  const t = useT();
   const [config, setConfig] = useState(null);
   const [connected, setConnected] = useState(false);
   const [active, setActive] = useState(TABS[0].key);
@@ -45,18 +48,18 @@ export default function App() {
 
   if (!connected) return <Connect onConnected={handleConnected} />;
 
-  const tab = TABS.find((t) => t.key === active) || TABS[0];
+  const tab = TABS.find((entry) => entry.key === active) || TABS[0];
 
   return (
     <div className="app">
       <header className="app-header">
         <div className="app-header-inner">
           <div className="brand">
-            <strong className="brand-name script">{config?.Name || 'Connecté'}</strong>
+            <strong className="brand-name script">{config?.Name || t('app.connected')}</strong>
             <small>Memento</small>
           </div>
-          <nav className="main-nav" aria-label="Navigation principale">
-            {TABS.map(({ key, label }) => (
+          <nav className="main-nav" aria-label={t('app.nav')}>
+            {TABS.map(({ key }) => (
               <button
                 key={key}
                 type="button"
@@ -64,15 +67,16 @@ export default function App() {
                 aria-current={key === tab.key ? 'page' : undefined}
                 onClick={() => setActive(key)}
               >
-                {label}
+                {t(`tab.${key}`)}
               </button>
             ))}
           </nav>
           <div className="header-actions">
+            <LanguageToggle />
             <ThemeToggle />
             <button type="button" className="btn-ghost btn-sm" onClick={handleDisconnect}>
               <SignOut size={18} weight="light" aria-hidden="true" />
-              Se déconnecter
+              {t('app.disconnect')}
             </button>
           </div>
         </div>

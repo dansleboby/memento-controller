@@ -1,11 +1,12 @@
 import { useState } from 'react';
 import { Warning } from '@phosphor-icons/react';
+import { useT } from '../i18n/index.jsx';
 
-const WORD = 'CONFIRMER';
-
-// Arm, then require typing WORD, then an explicit confirm click.
+// Arm, then require typing the confirmation word, then an explicit confirm click.
 // onConfirm only ever runs from the final button; `ready` lets the parent add its own preconditions.
 export default function DangerConfirm({ label, warning, ready = true, onConfirm, children }) {
+  const t = useT();
+  const word = t('danger.word');
   const [armed, setArmed] = useState(false);
   const [typed, setTyped] = useState('');
   const [busy, setBusy] = useState(false);
@@ -19,7 +20,7 @@ export default function DangerConfirm({ label, warning, ready = true, onConfirm,
   }
 
   async function confirm() {
-    if (typed !== WORD || !ready || busy) return;
+    if (typed !== word || !ready || busy) return;
     setBusy(true);
     setError(null);
     try {
@@ -27,7 +28,7 @@ export default function DangerConfirm({ label, warning, ready = true, onConfirm,
       setDone(true);
       disarm();
     } catch (e) {
-      setError(e.message || 'Échec de l\'opération.');
+      setError(e.message || t('danger.failed'));
     } finally {
       setBusy(false);
     }
@@ -40,7 +41,7 @@ export default function DangerConfirm({ label, warning, ready = true, onConfirm,
         {warning}
       </p>
       {error && <p role="alert">{error}</p>}
-      {done && <p role="status">Opération envoyée.</p>}
+      {done && <p role="status">{t('danger.sent')}</p>}
       {!armed ? (
         <div>
           <button type="button" onClick={() => { setDone(false); setError(null); setArmed(true); }}>
@@ -50,13 +51,13 @@ export default function DangerConfirm({ label, warning, ready = true, onConfirm,
       ) : (
         <div className="danger-form">
           {children}
-          <label htmlFor={inputId}>Saisissez {WORD} pour confirmer</label>
+          <label htmlFor={inputId}>{t('danger.type', word)}</label>
           <input id={inputId} value={typed} autoComplete="off" onChange={(e) => setTyped(e.target.value)} />
           <div className="button-row">
-            <button type="button" className="btn-danger" disabled={typed !== WORD || !ready || busy} onClick={confirm}>
-              Confirmer : {label}
+            <button type="button" className="btn-danger" disabled={typed !== word || !ready || busy} onClick={confirm}>
+              {t('danger.confirm', label)}
             </button>
-            <button type="button" onClick={disarm} disabled={busy}>Annuler</button>
+            <button type="button" onClick={disarm} disabled={busy}>{t('common.cancel')}</button>
           </div>
         </div>
       )}

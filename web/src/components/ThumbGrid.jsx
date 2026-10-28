@@ -1,11 +1,13 @@
 import { useState } from 'react';
 import { MonitorPlay } from '@phosphor-icons/react';
 import * as api from '../api/client.js';
+import { useT } from '../i18n/index.jsx';
 
 const baseName = (name) => name.replace(/\.[^.]+$/, '');
 
 // The frame streams thumbnails one at a time, so each tile shows its own loading state.
 function Thumb({ name, checked, onToggle, onSetCurrent }) {
+  const t = useT();
   const [loaded, setLoaded] = useState(false);
   return (
     <li className="thumb-tile" aria-busy={!loaded}>
@@ -20,7 +22,7 @@ function Thumb({ name, checked, onToggle, onSetCurrent }) {
             onError={() => setLoaded(true)}
           />
           <label className="thumb-select">
-            <input type="checkbox" checked={checked} onChange={() => onToggle(name)} aria-label={`Sélectionner ${name}`} />
+            <input type="checkbox" checked={checked} onChange={() => onToggle(name)} aria-label={t('thumb.select', name)} />
           </label>
         </div>
       </div>
@@ -31,8 +33,8 @@ function Thumb({ name, checked, onToggle, onSetCurrent }) {
         <button
           type="button"
           className="thumb-play btn-icon btn-sm"
-          aria-label="Définir comme image actuelle"
-          title="Afficher sur le cadre"
+          aria-label={t('thumb.setCurrent')}
+          title={t('thumb.showTitle')}
           onClick={() => onSetCurrent(name)}
         >
           <MonitorPlay size={18} weight="light" aria-hidden="true" />

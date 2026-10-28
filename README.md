@@ -10,6 +10,8 @@ is not modified, and nothing leaves your network.
 
 ## Features
 
+- **English and French** interface (follows the browser, switchable in the header),
+  light and dark themes.
 - **Connect**: find the frame on the network, or enter its IP address.
 - **Library**: browse every photo on the frame, upload new ones (drag and drop,
   JPEG/PNG, HEIC when the system supports it), delete, show a photo right now,

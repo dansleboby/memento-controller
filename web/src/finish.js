@@ -1,20 +1,15 @@
 // The product's frame finishes; the choice only dresses the thumbnails and is kept per browser.
 const KEY = 'memento.finish';
 
-export const FINISHES = [
-  ['black', 'Noir'],
-  ['silver', 'Argent'],
-  ['darkbrown', 'Brun foncé'],
-  ['auburn', 'Auburn'],
-  ['walnut', 'Noyer'],
-];
+// Labels come from the `finish.<key>` translations.
+export const FINISHES = ['black', 'silver', 'darkbrown', 'auburn', 'walnut'];
 
 export function readFinish() {
   try {
     const value = localStorage.getItem(KEY);
-    return FINISHES.some(([key]) => key === value) ? value : FINISHES[0][0];
+    return FINISHES.includes(value) ? value : FINISHES[0];
   } catch {
-    return FINISHES[0][0];
+    return FINISHES[0];
   }
 }
 

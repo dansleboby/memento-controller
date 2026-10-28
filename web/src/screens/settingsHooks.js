@@ -1,10 +1,12 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import * as api from '../api/client.js';
+import { useT } from '../i18n/index.jsx';
 
 export const DEBOUNCE_MS = 400;
 
 // Loads the config once on mount; a failure is reported but never blocks the screen.
 export function useConfig() {
+  const t = useT();
   const [config, setConfig] = useState(null);
   const [error, setError] = useState(null);
   useEffect(() => {
@@ -12,7 +14,7 @@ export function useConfig() {
     api
       .getConfig()
       .then((c) => alive && setConfig(c || {}))
-      .catch((e) => alive && setError(`Impossible de lire la configuration : ${e.message}`));
+      .catch((e) => alive && setError(t('common.configFailed', e.message)));
     return () => {
       alive = false;
     };
@@ -23,6 +25,7 @@ export function useConfig() {
 // One granular write per call. Debounced writes are keyed by action so
 // controls never cancel each other; the pending timer is dropped on unmount.
 export function useWriter() {
+  const t = useT();
   const [error, setError] = useState(null);
   const timers = useRef({});
   const failed = useRef(false);
@@ -41,9 +44,9 @@ export function useWriter() {
       }
     } catch (e) {
       failed.current = true;
-      setError(`Échec de l'enregistrement : ${e.message}`);
+      setError(t('common.saveFailed', e.message));
     }
-  }, []);
+  }, [t]);
 
   const writeDebounced = useCallback(
     (action, value) => {

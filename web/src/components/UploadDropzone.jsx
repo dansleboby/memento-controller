@@ -1,7 +1,9 @@
 import { useState } from 'react';
 import { CloudArrowUp } from '@phosphor-icons/react';
+import { useT } from '../i18n/index.jsx';
 
 export default function UploadDropzone({ onFiles, disabled }) {
+  const t = useT();
   const [over, setOver] = useState(false);
 
   function handleDrop(e) {
@@ -29,9 +31,9 @@ export default function UploadDropzone({ onFiles, disabled }) {
       onDrop={handleDrop}
     >
       <CloudArrowUp size={30} weight="light" aria-hidden="true" />
-      <p>Glissez des images ici ou</p>
+      <p>{t('drop.hint')}</p>
       <label className="btn btn-primary">
-        Importer des images
+        {t('drop.pick')}
         <input
           className="visually-hidden"
           type="file"

@@ -1,11 +1,13 @@
 import { useState } from 'react';
 import { Moon, Sun } from '@phosphor-icons/react';
+import { useT } from '../i18n/index.jsx';
 import { applyTheme, effectiveTheme } from '../theme.js';
 
 export default function ThemeToggle({ className = '' }) {
+  const t = useT();
   const [theme, setTheme] = useState(effectiveTheme);
   const next = theme === 'dark' ? 'light' : 'dark';
-  const label = next === 'dark' ? 'Passer au thème sombre' : 'Passer au thème clair';
+  const label = next === 'dark' ? t('theme.toDark') : t('theme.toLight');
   const Icon = next === 'dark' ? Moon : Sun;
 
   return (
