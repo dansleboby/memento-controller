@@ -5,6 +5,7 @@
   "private": true,
   "description": "Unofficial desktop controller for the Memento Smart Frame",
   "author": "Gilbert Paquin",
+  "license": "PolyForm-Noncommercial-1.0.0",
   "desktopName": "memento-controller.desktop",
   "type": "module",
   "main": "electron/main.js",

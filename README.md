@@ -213,4 +213,9 @@ preserved for the community: see [`firmware/README.md`](firmware/README.md).
 
 ## License
 
-To be decided before publication.
+[PolyForm Noncommercial 1.0.0](LICENSE.md): free to use, share and modify for
+any noncommercial purpose; commercial use is not allowed. The software comes
+as is, without any warranty or liability.
+
+The license covers this project's own code only. The firmware packages and
+the official Windows app in the firmware archive belong to their owner.
