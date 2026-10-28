@@ -1,9 +1,15 @@
-# Memento Controller
+# Memento Smart Frame Controller
 
-An unofficial desktop app (Windows, macOS, Linux) to manage a **Memento Smart
-Frame** on your home network, now that the official desktop and mobile apps are
-no longer maintained. It speaks the frame's existing local protocol: the
-frame's firmware is not modified, and nothing leaves your network.
+**Memento Controller** is an unofficial desktop app for the **Memento Smart
+Frame**, for Windows, macOS and Linux. The official Memento Smart Frame apps
+are no longer maintained and the maker's servers are offline; this app brings
+the frame back under your control: upload photos, manage albums, tune the
+display and set the clock again.
+
+It talks to the frame directly over your home network, with the frame's own
+local protocol: no account, no cloud, the firmware is not modified, and nothing
+leaves your network. Tested with a Memento Smart Frame running software 6.02;
+the 25" and 35" models run the same software.
 
 > Not affiliated with or endorsed by the makers of the Memento Smart Frame.
 > "Memento Smart Frame" is a trademark of its owner.
@@ -49,6 +55,61 @@ first launch:
   *System Settings > Privacy & Security* and choose *Open Anyway*, or run
   `xattr -cr "/Applications/Memento Controller.app"` once. Allow the *Local
   Network* prompt, or the frame cannot be found.
+
+## About the Memento Smart Frame
+
+The Memento Smart Frame was a 4K Wi-Fi digital picture frame made by Memento
+Electronics Inc. (Terrebonne, Quebec, Canada), sold as the "World's Most
+Advanced 4K Smart Frame".
+
+- Two sizes: 25" (29 x 21 x 2 in) and 35" (39 x 29 x 2 in), in black, silver,
+  dark brown, auburn or walnut.
+- 3240x2160 display (3:2), up to 3000 photos stored on the frame, and an
+  ambient light sensor that dims the screen and turns it off in the dark.
+- Android 4.4 inside, controlled over Wi-Fi by the official Memento app for
+  iOS, Android, Mac and Windows (`smartframepc.exe`).
+
+What no longer works:
+
+- The website `mementosmartframe.com` and its servers
+  (`builds.mementosmartframe.com`, `pictureshare.mementosmartframe.com`) are
+  gone; an archived copy of the site is on the
+  [Wayback Machine](https://web.archive.org/web/20190103143732/https://mementosmartframe.com/).
+- The official apps were pulled from the App Store (iOS `id1074055694`, Mac
+  `id1076992143`) and Google Play (`com.Memento.SmartFrame`).
+- "Share anywhere" remote uploads went through those servers, and the frame no
+  longer gets the time from the internet.
+
+The frame itself keeps working on your network, and Memento Controller does
+everything the official apps did locally.
+
+## FAQ
+
+**The official Memento app no longer works. Can I still use my frame?**
+Yes. Local control never needed the maker's servers: install Memento
+Controller on a computer on the same network and it finds the frame.
+
+**Can I still upload photos to my Memento Smart Frame?**
+Yes. Drag JPEG or PNG photos (HEIC where the system supports it) into the
+Library; the app prepares each one for the frame's 3240x2160 screen.
+
+**Does it need an account or the internet?**
+No. Everything stays on your local network.
+
+**Can it update or brick my frame?**
+It has no firmware update control, and the risky settings (Wi-Fi change,
+forget network, factory reset) each need a double confirmation.
+
+**My frame shows the wrong time after a restart.**
+Its time server is offline. Connect with Memento Controller once after each
+restart: it sends the computer's time to the frame.
+
+**Can I use it from my phone?**
+There is no phone app, but the [headless LAN server](#headless-lan-server) can
+be opened from any phone browser on the same network.
+
+**Where can I find the original firmware or the old Windows app?**
+In the [firmware archive](#memento-smart-frame-firmware-archive).
 
 ## Run from source
 
@@ -145,10 +206,10 @@ git tag v0.2.0 && git push origin v0.2.0
 Running the workflow by hand (*Actions > Release > Run workflow*) only builds,
 and leaves the files as workflow artifacts.
 
-## Firmware archive
+## Memento Smart Frame firmware archive
 
-The last firmware packages and the official Windows app are preserved for the
-community: see [`firmware/README.md`](firmware/README.md).
+The last Memento Smart Frame firmware packages and the official Windows app are
+preserved for the community: see [`firmware/README.md`](firmware/README.md).
 
 ## License
 
