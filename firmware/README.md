@@ -2,16 +2,16 @@
 
 Preservation copies of the last known Memento Smart Frame software, kept so
 owners can still find them now that the maker's download servers are offline.
-The files themselves are too large for git: they are published as release
-assets (and on the Internet Archive), and only this page and `SHA256SUMS` live
-in the repository.
+The files themselves are too large for git: they are published as assets of the
+[`firmware-20170727` release](https://github.com/dansleboby/memento-web-controller/releases/tag/firmware-20170727),
+and only this page and `SHA256SUMS` live in the repository.
 
 | File | What it is | Size | Download |
 |------|------------|------|----------|
-| `Memento_25.zip` | System update package for the 25" frame | 123 MB | _link after publication_ |
-| `Memento_35.zip` | System update package for the 35" frame | 123 MB | _link after publication_ |
-| `smartframepc.exe` | Official Windows app installer | 17 MB | [Wayback Machine, 2019-04-07](https://web.archive.org/web/20190407070756/https://builds.mementosmartframe.com/latest/smartframepc.exe) |
-| `memento-35-manual-update-procedure.pdf` | Official USB update procedure (35") | 0.4 MB | _link after publication_ |
+| `Memento_25.zip` | System update package for the 25" frame | 123 MB | [release](https://github.com/dansleboby/memento-web-controller/releases/download/firmware-20170727/Memento_25.zip) |
+| `Memento_35.zip` | System update package for the 35" frame | 123 MB | [release](https://github.com/dansleboby/memento-web-controller/releases/download/firmware-20170727/Memento_35.zip) |
+| `smartframepc.exe` | Official Windows app installer | 17 MB | [release](https://github.com/dansleboby/memento-web-controller/releases/download/firmware-20170727/smartframepc.exe), [Wayback Machine, 2019-04-07](https://web.archive.org/web/20190407070756/https://builds.mementosmartframe.com/latest/smartframepc.exe) |
+| `memento-35-manual-update-procedure.pdf` | Official USB update procedure (35") | 0.4 MB | [release](https://github.com/dansleboby/memento-web-controller/releases/download/firmware-20170727/memento-35-manual-update-procedure.pdf) |
 
 Verify a download with `sha256sum -c SHA256SUMS`.
 
@@ -20,7 +20,8 @@ Verify a download with `sha256sum -c SHA256SUMS`.
 - These are the original packages, as the maker distributed them: Android
   update zips still carrying their whole-file signature (`signed by SignApk`),
   1034 entries each, intact. They were recovered from copies shared by owners,
-  mainly in this [FredMiranda forum thread](https://www.fredmiranda.com/forum/topic/1636818/2),
+  mainly in this [FredMiranda forum thread](https://www.fredmiranda.com/forum/topic/1636818/2)
+  ([archived copy](https://web.archive.org/web/20261028025736/https://www.fredmiranda.com/forum/topic/1636818/2)),
   and in the DPReview thread
   [Anyone here own a Memento Smart Frame?](https://www.dpreview.com/forums/threads/anyone-here-own-a-memento-smart-frame.4471198/);
   the maker's own Google Drive folder (linked from the PDF) is no longer a
