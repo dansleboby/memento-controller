@@ -19,9 +19,11 @@ Verify a download with `sha256sum -c SHA256SUMS`.
 
 - These are the original packages, as the maker distributed them: Android
   update zips still carrying their whole-file signature (`signed by SignApk`),
-  1034 entries each, intact. They were recovered from copies shared on owner
-  forums; the maker's own Google Drive folder (linked from the PDF) is no
-  longer a reliable source.
+  1034 entries each, intact. They were recovered from copies shared by owners
+  in the DPReview thread
+  [Anyone here own a Memento Smart Frame?](https://www.dpreview.com/forums/threads/anyone-here-own-a-memento-smart-frame.4471198/);
+  the maker's own Google Drive folder (linked from the PDF) is no longer a
+  reliable source.
 - Build `KOT49H.20170727` (Android 4.4.2, board `n301`), built 2017-07-27,
   signed with test keys. The two packages differ only in their
   hardware-specific files (boot image, recovery, display library,
