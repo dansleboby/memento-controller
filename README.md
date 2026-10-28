@@ -29,7 +29,7 @@ frame's firmware is not modified, and nothing leaves your network.
 ## Install
 
 Download the file for your system from the
-[latest release](https://github.com/dansleboby/memento-web-controller/releases/latest):
+[latest release](https://github.com/dansleboby/memento-controller/releases/latest):
 
 | System | File |
 |--------|------|
